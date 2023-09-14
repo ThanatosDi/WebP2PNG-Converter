@@ -1,5 +1,8 @@
-import zipfile as zf
 import os
+import zipfile as zf
+
+from .config import Config
+
 
 class ZIP():
     def __init__(self): ...
@@ -17,7 +20,7 @@ class ZIP():
             for name in files:
                 file_list.append(os.path.join(root, name))
         save_path = os.path.join(dirname, f'{file_name}_new{file_extension}')
-        with zf.ZipFile(save_path, 'w', zf.zlib.DEFLATED) as z_f:
+        with zf.ZipFile(save_path, 'w', zf.zlib.DEFLATED, compresslevel=Config.ZIP_COMPRESS_LEVEL) as z_f:
             for file in file_list:
                 arc_name = file[len(f'{file_path}_files'):]
                 z_f.write(file, arc_name)
