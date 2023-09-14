@@ -1,16 +1,19 @@
 import os
-import sys
 import shutil
+import sys
+from multiprocessing.dummy import Pool as ThreadPool
+
+from app.config import Config
 from app.image import ImageConvert
 from app.zip import ZIP
 
+
 def zip_convert(file_path: str):
     try:
+        process = ThreadPool(Config.THREAD_COUNT)
         ZIP().decompress(file_path)
         files = ZIP().file_list(file_path)
-        for img_path in files:
-            ImageConvert().convert(img_path)
-            os.remove(img_path)
+        process.map(ImageConvert().convert, files)
         ZIP().compress(f'{file_path}')
     except Exception as e:
         print(e)
